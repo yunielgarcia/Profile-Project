@@ -5,6 +5,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
+from .forms import UserForm, UserProfileForm
+
 
 def sign_in(request):
     form = AuthenticationForm()
@@ -16,7 +18,9 @@ def sign_in(request):
                 if user.is_active:
                     login(request, user)
                     return HttpResponseRedirect(
-                        reverse('home')  # TODO: go to profile
+                        reverse('accounts:profile_detail', kwargs={
+                            'profile_pk': 1,  # == self.course.pk
+                        })
                     )
                 else:
                     messages.error(
@@ -32,10 +36,14 @@ def sign_in(request):
 
 
 def sign_up(request):
-    form = UserCreationForm()
+    user_form = UserForm()
+    profile_form = UserProfileForm()
+
     if request.method == 'POST':
-        form = UserCreationForm(data=request.POST)
-        if form.is_valid():
+        user_form = UserForm(data=request.POST)
+        profile_form = UserProfileForm(data=request.POST)
+
+        if user_form.is_valid() and profile_form.is_valid():
             form.save()
             user = authenticate(
                 username=form.cleaned_data['username'],
@@ -46,7 +54,7 @@ def sign_up(request):
                 request,
                 "You're now a user! You've been signed in, too."
             )
-            return HttpResponseRedirect(reverse('home'))  # TODO: go to profile
+            return HttpResponseRedirect(reverse('accounts:profile'))
     return render(request, 'accounts/sign_up.html', {'form': form})
 
 
@@ -54,3 +62,16 @@ def sign_out(request):
     logout(request)
     messages.success(request, "You've been signed out. Come back soon!")
     return HttpResponseRedirect(reverse('home'))
+
+
+# PROFILE
+def profile_detail(request, profile_pk):
+    return render(request, 'accounts/profile.html', {'profile': {'name': 'Yuni'}})
+
+
+def profile_edit(request, profile_pk):
+    return render(request, 'accounts/edit_profile.html', {'profile': {'name': 'Yuni'}})
+
+
+def profile_change_password(request, profile_pk):
+    return render(request, 'accounts/change_password.html', {'profile': {'name': 'Yuni'}})

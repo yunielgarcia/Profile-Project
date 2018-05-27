@@ -1,11 +1,13 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth import login, logout
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from .forms import UserForm, UserProfileForm
+from . import models
 
 
 def sign_in(request):
@@ -19,7 +21,7 @@ def sign_in(request):
                     login(request, user)
                     return HttpResponseRedirect(
                         reverse('accounts:profile_detail', kwargs={
-                            'profile_pk': 1,  # == self.course.pk
+                            'user_pk': user.pk,  # == self.course.pk
                         })
                     )
                 else:
@@ -36,16 +38,19 @@ def sign_in(request):
 
 
 def sign_up(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect(reverse('home'))
+
     user_form = UserForm()
     profile_form = UserProfileForm()
 
     if request.method == 'POST':
-        user_form = UserForm(data=request.POST)
-        profile_form = UserProfileForm(data=request.POST)
+        user_form = UserForm(request.POST)
+        profile_form = UserProfileForm(request.POST, request.FILES)
 
         if user_form.is_valid() and profile_form.is_valid():
 
-            user = user_form.save(commit=False)
+            user = user_form.save()
             user.set_password(user.password)
             user.save()
 
@@ -66,6 +71,7 @@ def sign_up(request):
     return render(request, 'accounts/sign_up.html', {'user_form': user_form, 'profile_form': profile_form})
 
 
+@login_required
 def sign_out(request):
     logout(request)
     messages.success(request, "You've been signed out. Come back soon!")
@@ -73,8 +79,10 @@ def sign_out(request):
 
 
 # PROFILE
-def profile_detail(request, profile_pk):
-    return render(request, 'accounts/profile.html', {'profile': {'name': 'Yuni'}})
+@login_required
+def profile_detail(request, user_pk):
+    user = get_object_or_404(models.User, pk=user_pk)
+    return render(request, 'accounts/profile.html', {'user': user})
 
 
 def profile_edit(request, profile_pk):

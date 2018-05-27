@@ -44,18 +44,26 @@ def sign_up(request):
         profile_form = UserProfileForm(data=request.POST)
 
         if user_form.is_valid() and profile_form.is_valid():
-            form.save()
-            user = authenticate(
-                username=form.cleaned_data['username'],
-                password=form.cleaned_data['password1']
-            )
-            login(request, user)
-            messages.success(
-                request,
-                "You're now a user! You've been signed in, too."
-            )
-            return HttpResponseRedirect(reverse('accounts:profile'))
-    return render(request, 'accounts/sign_up.html', {'form': form})
+
+            user = user_form.save(commit=False)
+            user.set_password(user.password)
+            user.save()
+
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.bio = profile_form.cleaned_data['bio']
+            profile.dob = profile_form.cleaned_data['dob']
+
+            if 'picture' in request.FILES:
+                profile.profile_pic = request.FILES['picture']
+
+            profile.save()
+            return HttpResponseRedirect(reverse('accounts:profile_detail', kwargs={'profile_pk': profile.pk}))
+
+        else:
+            print(user_form.errors, profile_form.errors)
+
+    return render(request, 'accounts/sign_up.html', {'user_form': user_form, 'profile_form': profile_form})
 
 
 def sign_out(request):

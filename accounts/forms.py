@@ -15,3 +15,11 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('bio', 'picture', 'dob')
+
+
+class UpdatePictureForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('picture',)
+#   todo: subiendo un profile pic desde profile page
+

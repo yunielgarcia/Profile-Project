@@ -45,7 +45,9 @@
             <div class="circle--fluid--cell circle--fluid--primary">
                 <nav>
                     <ul class="circle--inline">
-                        <li><a href="#">nav</a></li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'accounts:profile_detail' user_pk=user.pk %}">My profile</a></li>
+                        {% endif %}
                         <li><a href="#">here?</a></li>
                     </ul>
                 </nav>

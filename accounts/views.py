@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 
-from .forms import UserForm, UserProfileForm
+from .forms import UserForm, UserProfileForm, UpdatePictureForm
 from . import models
 
 
@@ -63,7 +63,7 @@ def sign_up(request):
                 profile.profile_pic = request.FILES['picture']
 
             profile.save()
-            return HttpResponseRedirect(reverse('accounts:profile_detail', kwargs={'profile_pk': profile.pk}))
+            return HttpResponseRedirect(reverse('accounts:profile_detail', kwargs={'user_pk': user.pk}))
 
         else:
             print(user_form.errors, profile_form.errors)
@@ -82,11 +82,29 @@ def sign_out(request):
 @login_required
 def profile_detail(request, user_pk):
     user = get_object_or_404(models.User, pk=user_pk)
-    return render(request, 'accounts/profile.html', {'user': user})
+    return render(request, 'accounts/profile.html', {'user': user, 'form': UpdatePictureForm()})
 
 
 def profile_edit(request, profile_pk):
     return render(request, 'accounts/edit_profile.html', {'profile': {'name': 'Yuni'}})
+
+
+def update_profile(request, profile_pk):
+
+    form = UpdatePictureForm()
+    profile = get_object_or_404(models.User, pk=profile_pk)
+
+    if request.method == 'POST':
+        form = UpdatePictureForm(request.POST)
+        if form.is_valid() and 'update_pic' in request.FILES:
+            profile.picture = request.FILES['update_pic']
+            profile.save()
+    return HttpResponseRedirect(reverse('accounts:profile_detail', kwargs={'user_pk': profile.user.pk}))
+
+
+
+
+
 
 
 def profile_change_password(request, profile_pk):

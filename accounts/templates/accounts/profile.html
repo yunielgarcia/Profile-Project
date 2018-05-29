@@ -1,8 +1,25 @@
 {% extends "layout.html" %}
+{% load staticfiles %}
 
-{% block title %}{{  }}{% endblock %}
+{% block title %}{{user.username|default:'Profile'}}{% endblock %}
 
 {% block body %}
-    <h1>Username:  {{ user.username }} </h1>
-    <h1>Username:  {{ user.userprofile.bio }} </h1>
+    <img src="{{user.userprofile.picture.url}}" alt="">
+
+
+    <form method="POST" action="{% url 'accounts:sign_up' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <input type="submit" class="button-primary" value="Sign Up">
+    </form>
+
+    <h3>Username:  {{ user.username }} </h3>
+    <h3>First Name:  {{ user.first_name }} </h3>
+    <h3>Last Name:  {{ user.last_name }} </h3>
+    <h3>Email:  {{ user.email }} </h3>
+    <h3>DOB:  {{ user.userprofile.dob|date:"d M Y"}} </h3>
+    <h3>Bio:  {{ user.userprofile.bio}} </h3>
+
+
 {% endblock %}

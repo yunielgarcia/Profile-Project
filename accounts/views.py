@@ -89,15 +89,15 @@ def profile_edit(request, profile_pk):
     return render(request, 'accounts/edit_profile.html', {'profile': {'name': 'Yuni'}})
 
 
-def update_profile(request, profile_pk):
+@login_required
+def update_profile_pic(request, profile_pk):
 
-    form = UpdatePictureForm()
-    profile = get_object_or_404(models.User, pk=profile_pk)
+    profile = get_object_or_404(models.UserProfile, pk=profile_pk)
 
     if request.method == 'POST':
-        form = UpdatePictureForm(request.POST)
-        if form.is_valid() and 'update_pic' in request.FILES:
-            profile.picture = request.FILES['update_pic']
+        form = UpdatePictureForm(request.POST, request.FILES)
+        if form.is_valid() and 'picture' in request.FILES:
+            profile.picture = request.FILES['picture']
             profile.save()
     return HttpResponseRedirect(reverse('accounts:profile_detail', kwargs={'user_pk': profile.user.pk}))
 

@@ -7,11 +7,11 @@
     <img src="{{user.userprofile.picture.url}}" alt="">
 
 
-    <form method="POST" action="{% url 'accounts:sign_up' %}" enctype="multipart/form-data">
+    <form method="POST" action="{% url 'accounts:update_profile_pic' profile_pk=user.userprofile.id %}" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
 
-        <input type="submit" class="button-primary" value="Sign Up">
+        <input type="submit" class="button-primary" value="Update">
     </form>
 
     <h3>Username:  {{ user.username }} </h3>

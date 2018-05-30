@@ -1,7 +1,13 @@
 {% extends "layout.html" %}
 
-{% block title %}Profile | {{ super }}{% endblock %}
+{% block title %}Edit profile | {{ super }}{% endblock %}
 
 {% block body %}
-<h1>Profile Edit page</h1>
+    <form method="POST" action="{% url 'accounts:profile_edit' profile_pk=profile.pk %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ user_form.as_p }}
+    {{ profile_form.as_p }}
+
+    <input type="submit" class="button-primary" value="Sign Up">
+</form>
 {% endblock %}

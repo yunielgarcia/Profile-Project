@@ -68,7 +68,8 @@ def sign_up(request):
         else:
             print(user_form.errors, profile_form.errors)
 
-    return render(request, 'accounts/sign_up.html', {'user_form': user_form, 'profile_form': profile_form})
+    return render(request, 'accounts/sign_up.html', {'user_form': user_form,
+                                                     'profile_form': profile_form})
 
 
 @login_required
@@ -86,12 +87,27 @@ def profile_detail(request, user_pk):
 
 
 def profile_edit(request, profile_pk):
-    return render(request, 'accounts/edit_profile.html', {'profile': {'name': 'Yuni'}})
+    user_profile = get_object_or_404(models.UserProfile, pk=profile_pk)
+
+    profile_form = UserProfileForm(instance=user_profile)
+    user_form = UserForm(instance=user_profile.user)
+
+    if request.method == 'POST':
+        profile_form = UserProfileForm(request.POST, request.FILES)
+        user_form = UserForm(request.POST)
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+            profile = profile_form.save()
+            messages.success(request, "Profile updated")
+            return HttpResponseRedirect(reverse('accounts:profile_detail', kwargs={'user_pk': user.pk}))
+    return render(request, 'accounts/edit_profile.html', {'profile_form': profile_form,
+                                                          'user_form': user_form,
+                                                          'profile': user_profile})
 
 
 @login_required
 def update_profile_pic(request, profile_pk):
-
+    """Update just profile pic"""
     profile = get_object_or_404(models.UserProfile, pk=profile_pk)
 
     if request.method == 'POST':
@@ -100,11 +116,6 @@ def update_profile_pic(request, profile_pk):
             profile.picture = request.FILES['picture']
             profile.save()
     return HttpResponseRedirect(reverse('accounts:profile_detail', kwargs={'user_pk': profile.user.pk}))
-
-
-
-
-
 
 
 def profile_change_password(request, profile_pk):

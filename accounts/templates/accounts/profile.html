@@ -9,9 +9,9 @@
 
     <form method="POST" action="{% url 'accounts:update_profile_pic' profile_pk=user.userprofile.id %}" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form }}
 
-        <input type="submit" class="button-primary" value="Update">
+        <input type="submit" class="button-primary" value="Update Picture">
     </form>
 
     <h3>Username:  {{ user.username }} </h3>
@@ -20,6 +20,9 @@
     <h3>Email:  {{ user.email }} </h3>
     <h3>DOB:  {{ user.userprofile.dob|date:"d M Y"}} </h3>
     <h3>Bio:  {{ user.userprofile.bio}} </h3>
+
+
+    <a href="{% url 'accounts:profile_edit' profile_pk=user.userprofile.pk %}">Edit Profile</a>
 
 
 {% endblock %}

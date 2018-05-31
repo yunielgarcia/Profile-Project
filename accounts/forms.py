@@ -1,3 +1,5 @@
+import datetime
+
 from django import forms
 from django.contrib.auth.models import User
 from accounts.models import UserProfile
@@ -12,6 +14,11 @@ class UserForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
+    dob = forms.DateTimeField(input_formats=[
+        '%Y-%m-%d',
+        '%m/%d/%Y',
+        '%m/%d/%y'])
+
     class Meta:
         model = UserProfile
         fields = ('bio', 'picture', 'dob')
@@ -21,5 +28,20 @@ class UpdatePictureForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('picture',)
-#   todo: subiendo un profile pic desde profile page
 
+
+class EditUserForm(forms.ModelForm):
+    confirm_email = forms.CharField(label='Confirm Email')
+
+    class Meta:
+        model = User
+        fields = ('email', 'confirm_email', 'first_name', 'last_name')
+
+    def clean(self):
+        """Cleans the entire form"""
+        clean_data = super().clean()
+        email = clean_data.get('email')
+        verify = clean_data.get('confirm_email')
+
+        if email != verify:
+            raise forms.ValidationError("You need to enter the same email in both fields")

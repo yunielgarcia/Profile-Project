@@ -3,11 +3,11 @@
 {% block title %}Edit profile | {{ super }}{% endblock %}
 
 {% block body %}
-    <form method="POST" action="{% url 'accounts:profile_edit' profile_pk=profile.pk %}" enctype="multipart/form-data">
+    <form method="POST" action="{% url 'accounts:profile_edit' %}" enctype="multipart/form-data">
     {% csrf_token %}
     {{ user_form.as_p }}
     {{ profile_form.as_p }}
 
-    <input type="submit" class="button-primary" value="Sign Up">
+    <input type="submit" class="button-primary" value="Update">
 </form>
 {% endblock %}

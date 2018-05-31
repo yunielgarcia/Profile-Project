@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 
-from .forms import UserForm, UserProfileForm, UpdatePictureForm
+from .forms import UserForm, UserProfileForm, UpdatePictureForm, EditUserForm
 from . import models
 
 
@@ -86,23 +86,24 @@ def profile_detail(request, user_pk):
     return render(request, 'accounts/profile.html', {'user': user, 'form': UpdatePictureForm()})
 
 
-def profile_edit(request, profile_pk):
-    user_profile = get_object_or_404(models.UserProfile, pk=profile_pk)
+@login_required
+def profile_edit(request):
+    user = request.user
 
-    profile_form = UserProfileForm(instance=user_profile)
-    user_form = UserForm(instance=user_profile.user)
+    profile_form = UserProfileForm(instance=user.userprofile)
+    user_form = EditUserForm(instance=user)
 
     if request.method == 'POST':
-        profile_form = UserProfileForm(request.POST, request.FILES)
-        user_form = UserForm(request.POST)
+        profile_form = UserProfileForm(instance=user.userprofile, data=request.POST, files=request.FILES)
+        user_form = EditUserForm(instance=user, data=request.POST)
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
-            profile = profile_form.save()
+            profile_form.save()
+
             messages.success(request, "Profile updated")
             return HttpResponseRedirect(reverse('accounts:profile_detail', kwargs={'user_pk': user.pk}))
     return render(request, 'accounts/edit_profile.html', {'profile_form': profile_form,
-                                                          'user_form': user_form,
-                                                          'profile': user_profile})
+                                                          'user_form': user_form})
 
 
 @login_required

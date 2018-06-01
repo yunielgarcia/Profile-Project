@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% load staticfiles %}
+{% load account_extras %}
 
 {% block title %}{{user.username|default:'Profile'}}{% endblock %}
 
@@ -21,7 +22,7 @@
     <h3>Last Name:  {{ user.last_name }} </h3>
     <h3>Email:  {{ user.email }} </h3>
     <h3>DOB:  {{ user.userprofile.dob|date:"d M Y"}} </h3>
-    <h3>Bio:  {{ user.userprofile.bio}} </h3>
+    <h3>Bio:  {{ user.userprofile.bio|markdown_to_html}} </h3>
 
 
     <a href="{% url 'accounts:profile_edit' %}">Edit Profile</a>

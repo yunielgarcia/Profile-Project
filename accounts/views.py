@@ -119,5 +119,5 @@ def update_profile_pic(request, profile_pk):
     return HttpResponseRedirect(reverse('accounts:profile_detail', kwargs={'user_pk': profile.user.pk}))
 
 
-def profile_change_password(request, profile_pk):
+def profile_change_password(request):
     return render(request, 'accounts/change_password.html', {'profile': {'name': 'Yuni'}})

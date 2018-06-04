@@ -2,30 +2,58 @@
 {% load staticfiles %}
 {% load account_extras %}
 
-{% block title %}{{user.username|default:'Profile'}}{% endblock %}
+{% block title %}{{ user.username|default:'Profile' }}{% endblock %}
 
 {% block body %}
-    {% if user.userprofile.picture %}
-        <img src="{{user.userprofile.picture.url}}" alt="">
-    {% endif %}
+    <div style="text-align: center">
+        {% if user.userprofile.picture %}
+            <img src="{{ user.userprofile.picture.url }}" alt="" style="border-radius: 50%;max-width: 250px;">
+        {% endif %}
+    </div>
+    <div style="margin: auto;width: 80%;">
+        <form method="POST" action="{% url 'accounts:update_profile_pic' profile_pk=user.userprofile.id %}"
+              enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form }}
+
+            <input type="submit" class="button-primary" value="Update Picture">
+        </form>
+
+        <table style="width: 100%;">
+            <tr>
+                <td>Username:</td>
+                <td>{{ user.username }}</td>
+            </tr>
+            <tr>
+                <td>First Name:</td>
+                <td>{{ user.first_name }}</td>
+            </tr>
+            <tr>
+                <td>Last Name:</td>
+                <td>{{ user.last_name }}</td>
+            </tr>
+            <tr>
+                <td>Email:</td>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <td>Date of Birth:</td>
+                <td>{{ user.userprofile.dob|date:"d M Y" }}</td>
+            </tr>
+            <tr>
+                <td>Biography:</td>
+                <td>{{ user.userprofile.bio|markdown_to_html }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="text-align: center">
+        <a href="{% url 'accounts:profile_edit' %}" class="button">Edit Profile</a>
+    </div>
 
 
-    <form method="POST" action="{% url 'accounts:update_profile_pic' profile_pk=user.userprofile.id %}" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form }}
-
-        <input type="submit" class="button-primary" value="Update Picture">
-    </form>
-
-    <h3>Username:  {{ user.username }} </h3>
-    <h3>First Name:  {{ user.first_name }} </h3>
-    <h3>Last Name:  {{ user.last_name }} </h3>
-    <h3>Email:  {{ user.email }} </h3>
-    <h3>DOB:  {{ user.userprofile.dob|date:"d M Y"}} </h3>
-    <h3>Bio:  {{ user.userprofile.bio|markdown_to_html}} </h3>
 
 
-    <a href="{% url 'accounts:profile_edit' %}">Edit Profile</a>
 
 
 {% endblock %}

@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 
 from .forms import UserForm, UserProfileForm, UpdatePictureForm, EditUserForm
 from . import models
@@ -119,5 +121,19 @@ def update_profile_pic(request, profile_pk):
     return HttpResponseRedirect(reverse('accounts:profile_detail', kwargs={'user_pk': profile.user.pk}))
 
 
+@login_required
 def profile_change_password(request):
-    return render(request, 'accounts/change_password.html', {'profile': {'name': 'Yuni'}})
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return HttpResponseRedirect(reverse('accounts:profile_detail', kwargs={'user_pk': user.pk}))
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'accounts/change_password.html', {
+        'form': form
+    })

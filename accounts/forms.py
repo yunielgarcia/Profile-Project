@@ -17,7 +17,7 @@ class UserProfileForm(forms.ModelForm):
     dob = forms.DateTimeField(input_formats=[
         '%Y-%m-%d',
         '%m/%d/%Y',
-        '%m/%d/%y'])
+        '%m/%d/%y'], )
 
     class Meta:
         model = UserProfile
@@ -45,3 +45,6 @@ class EditUserForm(forms.ModelForm):
 
         if email != verify:
             raise forms.ValidationError("You need to enter the same email in both fields")
+
+
+#todo: psw validation for sign up

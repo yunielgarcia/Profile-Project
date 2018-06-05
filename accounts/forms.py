@@ -3,10 +3,17 @@ import datetime
 from django import forms
 from django.contrib.auth.models import User
 from accounts.models import UserProfile
+from django.contrib.auth.password_validation import validate_password
+
+
+def general_validation(value):
+    if not validate_password(value):
+        forms.ValidationError('Password is not valid')
 
 
 class UserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput())
+    password = forms.CharField(widget=forms.PasswordInput(),
+                               validators=[general_validation])
 
     class Meta:
         model = User
@@ -17,7 +24,8 @@ class UserProfileForm(forms.ModelForm):
     dob = forms.DateTimeField(input_formats=[
         '%Y-%m-%d',
         '%m/%d/%Y',
-        '%m/%d/%y'], )
+        '%m/%d/%y'],
+        widget=forms.DateTimeInput(format='%m/%d/%Y'))
 
     class Meta:
         model = UserProfile
@@ -45,6 +53,3 @@ class EditUserForm(forms.ModelForm):
 
         if email != verify:
             raise forms.ValidationError("You need to enter the same email in both fields")
-
-
-#todo: psw validation for sign up

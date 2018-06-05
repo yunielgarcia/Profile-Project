@@ -90,6 +90,10 @@ PASSWORD_HASHERS = [
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'OPTIONS': {
+            'user_attributes': ['first_name', 'last_name', 'email', 'password'],
+            'max_similarity': 0.7
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
@@ -113,6 +117,12 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'accounts.validators.SymbolValidator',
     },
+    {
+        'NAME': 'accounts.validators.NumberValidator',
+    },
+    {
+        'NAME': 'accounts.validators.CurrentValidator',
+    },
 ]
 
 # Internationalization
@@ -121,6 +131,8 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
+
+DATETIME_FORMAT = ('%m/%d/%Y',)
 
 USE_I18N = True
 

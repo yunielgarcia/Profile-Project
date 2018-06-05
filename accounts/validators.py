@@ -4,6 +4,18 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
 
 
+class CurrentValidator(object):
+    def validate(self, password, user=None):
+        """Validates new psw is different from current"""
+        if user.check_password(password):
+            raise ValidationError('Invalid password')
+
+    def get_help_text(self):
+        return _(
+            "Your password must not be the same as current one"
+        )
+
+
 class NumberValidator(object):
     def validate(self, password, user=None):
         if not re.findall('\d', password):

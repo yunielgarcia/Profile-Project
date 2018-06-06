@@ -7,7 +7,7 @@ from django.utils.translation import ugettext as _
 class CurrentValidator(object):
     def validate(self, password, user=None):
         """Validates new psw is different from current"""
-        if user.check_password(password):
+        if user and user.check_password(password):
             raise ValidationError('Invalid password')
 
     def get_help_text(self):

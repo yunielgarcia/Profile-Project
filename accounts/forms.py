@@ -25,9 +25,27 @@ class UserForm(forms.ModelForm):
         clean_data = super().clean()
         email = clean_data.get('email')
         verify = clean_data.get('confirm_email')
+        psw = clean_data.get('password')
+        username = clean_data.get('username')
+        first = clean_data.get('first_name')
+        last = clean_data.get('last_name')
 
         if email != verify:
             raise forms.ValidationError("Please, make sure your emails match")
+        if self.contain_weak_psw(psw, username, first, last):
+            raise forms.ValidationError("Please, make sure your password"
+                                        " doesn't contain your username/first name/last name")
+
+    def contain_weak_psw(self, psw, username, first, last):
+        password = str(psw).lower()
+        if (
+                str(username).lower() in password or
+                str(first).lower() in password or
+                str(last).lower() in password
+        ):
+            return True
+        else:
+            return False
 
 
 class UserProfileForm(forms.ModelForm):

@@ -19,13 +19,20 @@ class CurrentValidator(object):
 class NamePartsValidator(object):
     def validate(self, password, user=None):
         """Validates new psw doesn't contain parts of full name"""
-        if user:
-            raise ValidationError('Invalid password')
+        if user:  # Means is changing psw
+            if self.contain_weak_psw(password, user.username, user.first_name, user.last_name):
+                raise ValidationError('Password must not contain username/first name/last name')
 
     def get_help_text(self):
         return _(
             "Your password must not be the same as current one"
         )
+
+    def contain_weak_psw(self, psw, username, first, last):
+        password = str(psw).lower()
+        return (str(username).lower() in password or
+                str(first).lower() in password or
+                str(last).lower() in password)
 
 
 class NumberValidator(object):

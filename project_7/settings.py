@@ -91,8 +91,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
         'OPTIONS': {
-            'user_attributes': ['first_name', 'last_name', 'email', 'password'],
-            'max_similarity': 0.7
+            'max_similarity': 1
         }
     },
     {
@@ -107,7 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
-    # Costume validators
+    # Costume psw validators
     {
         'NAME': 'accounts.validators.UppercaseValidator',
     },
@@ -122,6 +121,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'accounts.validators.CurrentValidator',
+    },
+    {
+        'NAME': 'accounts.validators.NamePartsValidator',
     },
 ]
 

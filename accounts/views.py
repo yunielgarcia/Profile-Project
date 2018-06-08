@@ -137,14 +137,3 @@ def profile_change_password(request):
     return render(request, 'accounts/change_password.html', {
         'form': form
     })
-
-
-# class CurrentValidator(object):
-#     def validate(self, password, user=None):
-#         if not user.check_password(password):
-#             raise ValidationError('Invalid password')
-#
-#     def get_help_text(self):
-#         return _(
-#             "Your password must not be the same as current one"
-#         )

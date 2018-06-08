@@ -14,10 +14,20 @@ def general_validation(value):
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(),
                                validators=[general_validation])
+    confirm_email = forms.CharField(label='Confirm Email')
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'first_name', 'last_name')
+        fields = ('username', 'email', 'confirm_email', 'password', 'first_name', 'last_name')
+
+    def clean(self):
+        """Cleans the entire form"""
+        clean_data = super().clean()
+        email = clean_data.get('email')
+        verify = clean_data.get('confirm_email')
+
+        if email != verify:
+            raise forms.ValidationError("Please, make sure your emails match")
 
 
 class UserProfileForm(forms.ModelForm):

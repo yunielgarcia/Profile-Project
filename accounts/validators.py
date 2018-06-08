@@ -16,6 +16,18 @@ class CurrentValidator(object):
         )
 
 
+class NamePartsValidator(object):
+    def validate(self, password, user=None):
+        """Validates new psw doesn't contain parts of full name"""
+        if user:
+            raise ValidationError('Invalid password')
+
+    def get_help_text(self):
+        return _(
+            "Your password must not be the same as current one"
+        )
+
+
 class NumberValidator(object):
     def validate(self, password, user=None):
         if not re.findall('\d', password):

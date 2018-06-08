@@ -8,7 +8,7 @@ class CurrentValidator(object):
     def validate(self, password, user=None):
         """Validates new psw is different from current"""
         if user and user.check_password(password):
-            raise ValidationError('Invalid password')
+            raise ValidationError('Use different password than current')
 
     def get_help_text(self):
         return _(
@@ -72,10 +72,10 @@ class LowercaseValidator(object):
 
 class SymbolValidator(object):
     def validate(self, password, user=None):
-        if not re.findall('[()[\]{}|\\`~!@#$%^&amp;*_\-+=;:\'",<>./?]', password):
+        if not re.findall('[()[\]{}|\\`~!@#$%^&;*_\-+=;:\'",<>./?]', password):
             raise ValidationError(
                 _("The password must contain at least 1 symbol: " +
-                  "()[]{}|\`~!@#$%^&amp;*_-+=;:'\",<>./?"),
+                  "()[]{}|\`~!@#$%^&;*_-+=;:'\",<>./?"),
                 code='password_no_symbol',
             )
 
